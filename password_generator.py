@@ -1,6 +1,6 @@
 from random import choice
 from xkcdpass import xkcd_password
-
+import hashlib
 
 class XKCD:
     # Весь список разделителей, отдельно цифры, отдельно – спецсимволы

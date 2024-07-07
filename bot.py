@@ -103,32 +103,39 @@ def suffix(query: types.InlineQuery):
 @bot.message_handler(commands=['generate_weak'])
 def weak(message: types.Message):
     weak = xkcd.weak()
-    bot.send_message(message.from_user.id, f'Your password \n{weak}')
+
+    uniq = check_password_uniqueness(weak)
+    bot.send_message(message.from_user.id, f'Your password: \n{weak}\n\n{uniq}')
 
 
 @bot.message_handler(commands=['generate_normal'])
 def normal(message: types.Message):
     normal = xkcd.normal()
-    bot.send_message(message.from_user.id, f'Your password \n{normal}')
+
+    uniq = check_password_uniqueness(normal)
+    bot.send_message(message.from_user.id, f'Your password: \n{normal}\n\n{uniq}')
 
 
 @bot.message_handler(commands=['generate_strong'])
 def strong(message: types.Message):
     strong = xkcd.strong()
-    bot.send_message(message.from_user.id, f'Your password \n{strong}')
+
+    uniq = check_password_uniqueness(strong)
+    bot.send_message(message.from_user.id, f'Your password: \n{strong}\n\n{uniq}')
 
 
 @bot.message_handler(commands=['generate'])
-def generate(message: types.Message):
+def generate(message: types.Message, ):
     custom = xkcd.custom(prefixes=config.suffixes, separators=config.delimiters,
                          count=config.words_count)
 
-    bot.send_message(message.from_user.id, f'Your password {custom}')
+    uniq = check_password_uniqueness(custom)
+    bot.send_message(message.from_user.id, f'Your password: \n{custom}\n\n{uniq}')
 
 
 def check_password_uniqueness(password):
     # Хешируем пароль с помощью SHA1
-    sha1_password = hashlib.sha1(password.encode()).hexdigest().upper()
+    sha1_password = hashlib.sha1(password.encode('utf-8', errors="ignore")).hexdigest().upper()
 
     # Отправляем GET-запрос к API Have I Been Pwned
     response = requests.get(f"https://api.pwnedpasswords.com/range/{sha1_password[:5]}")
@@ -143,16 +150,17 @@ def check_password_uniqueness(password):
         return "The uniqueness of the password could not be verified."
 
 
-@bot.message_handler(commands=['check'])
-def check(message: types.Message):
+@bot.message_handler(commands=['check'], )
+def check(message: types.Message, ):
     args = message.text.split(" ")
 
     if len(args) < 2:
-        bot.send_message(message.from_user.id, 'Password not entered. To use the command, enter the password.' )
+        bot.send_message(message.from_user.id, 'Password not entered. To use the command, enter the password.')
 
         return
 
-    bot.send_photo(message.from_user.id, 'https://i.pinimg.com/originals/5a/c6/f5/5ac6f546be39abae59a76fa2a661915b.jpg', 'Password verification...')
+    bot.send_photo(message.from_user.id, 'https://i.pinimg.com/originals/5a/c6/f5/5ac6f546be39abae59a76fa2a661915b.jpg',
+                   'Password verification...')
     password = args[1]
     uniq = check_password_uniqueness(password)
 

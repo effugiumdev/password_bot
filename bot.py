@@ -10,7 +10,7 @@ import hashlib
 config = Config('./config.json')
 
 logging.basicConfig(level=logging.DEBUG)
-bot = telebot.TeleBot(token='7439540865:AAEc1linugjg1E0YzeOt2n65ech08cVMye8')
+bot = telebot.TeleBot(token='YOU_TOKEN')
 
 xkcd = XKCD('./words.txt')
 
